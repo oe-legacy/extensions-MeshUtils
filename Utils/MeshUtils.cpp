@@ -9,11 +9,130 @@
 
 #include <Utils/MeshUtils.h>
 #include <Geometry/Mesh.h>
+#include <Geometry/GeometrySet.h>
+#include <Resources/DataBlock.h>
 
 using namespace OpenEngine::Geometry;
+using namespace OpenEngine::Resources;
 
 namespace OpenEngine {
     namespace Utils {
+
+        MeshPtr CreatePlane(float size, Vector<3, float> color, unsigned int detail){
+            unsigned int d = detail + 1;
+            float halfSize = size / 2;
+            float unit = size / detail;
+            
+            unsigned int points = d * d;
+            float* v = new float[points];
+            float* n = new float[points];
+            float* c = new float[points];
+            
+            Float3DataBlockPtr vertices = Float3DataBlockPtr(new DataBlock<3, float>(v, points));
+            Float3DataBlockPtr normals = Float3DataBlockPtr(new DataBlock<3, float>(n, points));
+            Float3DataBlockPtr colors = Float3DataBlockPtr(new DataBlock<3, float>(c, points));
+            GeometrySetPtr geom = GeometrySetPtr(new GeometrySet(vertices, normals, Resources::IDataBlockList(), colors));
+
+            unsigned int quads = detail * detail
+            unsigned int* i = new unsigned int[6 * quads];
+            DataIndicesPtr indices = DataIndicesPtr(new DataIndices(i, 6 * quads));
+
+            Vector<3, float> normal = Vector<3, float>(0, 1, 0);
+            for (unsigned int i = 0; i < d; ++i){
+                for (unsigned int j = 0; j < d; ++j){
+                    unsigned int index = i + j * d;
+                    Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, halfSize, j * unit - halfSize);
+                    vertices->SetElement(index, vertex);
+                    normals->SetElement(index, normal);
+                    colors->SetElement(index, color);
+                }
+            }
+            unsigned int index = 0;
+            for (unsigned int m = 0; m < detail; ++m){
+                for (unsigned int n = 0; n < detail; ++n){
+                    // Index the (i, j)'th quad of 2 triangles
+                    i[index] = topOffset + m + n * d;
+                    ++index;
+                    i[index] = topOffset + m+1 + n * d;
+                    ++index;
+                    i[index] = topOffset + m + (n+1) * d;
+                    ++index;
+
+                    i[index] = topOffset + m+1 + n * d;
+                    ++index;
+                    i[index] = topOffset + m + (n+1) * d;
+                    ++index;
+                    i[index] = topOffset + m+1 + (n+1) * d;
+                    ++index;
+                }
+            }
+            
+            return MeshPtr(new Mesh(indices, TRIANGLES, MaterialPtr(), geom));
+        }
+        
+        MeshPtr CreateCube(float size, unsigned int detail, Vector<3, float> color){
+            unsigned int d = detail + 1;
+            float halfSize = size / 2;
+            float unit = size / detail;
+            
+            unsigned int topOffset = 0;
+            unsigned int bottomOffset = d * d;
+            unsigned int leftOffset = 2 * d * d;
+            unsigned int rightOffset = 3 * d * d;
+            unsigned int frontOffset = 4 * d * d;
+            unsigned int backOffset = 5 * d * d;
+            
+            unsigned int points = 6 * d * d;
+            float* v = new float[points];
+            float* n = new float[points];
+            float* c = new float[points];
+            
+            Float3DataBlockPtr vertices = Float3DataBlockPtr(new DataBlock<3, float>(v, points));
+            Float3DataBlockPtr normals = Float3DataBlockPtr(new DataBlock<3, float>(n, points));
+            Float3DataBlockPtr colors = Float3DataBlockPtr(new DataBlock<3, float>(c, points));
+            GeometrySetPtr geom = GeometrySetPtr(new GeometrySet(vertices, normals, Resources::IDataBlockList(), colors));
+
+            unsigned int* i = new unsigned int[6 * points];
+            DataIndicesPtr indices = DataIndicesPtr(new DataIndices(i, /*6 * */points));
+
+            // Top side geometry
+            Vector<3, float> normal = Vector<3, float>(0, 1, 0);
+            for (unsigned int i = 0; i < d; ++i){
+                for (unsigned int j = 0; j < d; ++j){
+                    unsigned int index = i + j * d;
+                    Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, halfSize, j * unit - halfSize);
+                    vertices->SetElement(index, vertex);
+                    normals->SetElement(index, normal);
+                    colors->SetElement(index, color);
+                }
+            }
+            // Top side indices
+            unsigned int index = 0;
+            for (unsigned int m = 0; m < detail; ++m){
+                for (unsigned int n = 0; n < detail; ++n){
+                    // Index the (i, j)'th quad of 2 triangles
+                    i[index] = topOffset + m + n * d;
+                    ++index;
+                    i[index] = topOffset + m+1 + n * d;
+                    ++index;
+                    i[index] = topOffset + m + (n+1) * d;
+                    ++index;
+
+                    i[index] = topOffset + m+1 + n * d;
+                    ++index;
+                    i[index] = topOffset + m + (n+1) * d;
+                    ++index;
+                    i[index] = topOffset + m+1 + (n+1) * d;
+                    ++index;
+                }
+            }
+            
+            return MeshPtr(new Mesh(indices, TRIANGLES, MaterialPtr(), geom));
+        }
+        
+        MeshPtr CreateSphere(float radius, unsigned int detail, Vector<3, float> color){
+            return MeshPtr();
+        }
 
         /**
          * This method takes a mesh and simplifies it, meaning making
