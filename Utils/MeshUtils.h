@@ -10,16 +10,16 @@
 #ifndef _OE_MESH_UTILS_H_
 #define _OE_MESH_UTILS_H_
 
+#include <boost/shared_ptr.hpp>
+
 namespace OpenEngine {
-    namespace Geoemtry {
+    namespace Geometry {
         class Mesh;
         typedef boost::shared_ptr<Mesh> MeshPtr;
     }
     namespace Utils {
         
-        MeshPtr Simplify(MeshPtr mesh, float edgeMargin = 0, char reduction = 75){
-            
-        }
+        Geometry::MeshPtr Simplify(Geometry::MeshPtr mesh, float edgeMargin = 0, char reduction = 75);
 
     }
 }

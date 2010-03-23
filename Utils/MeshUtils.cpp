@@ -10,6 +10,8 @@
 #include <Utils/MeshUtils.h>
 #include <Geometry/Mesh.h>
 
+using namespace OpenEngine::Geometry;
+
 namespace OpenEngine {
     namespace Utils {
 
@@ -27,9 +29,15 @@ namespace OpenEngine {
          * @return The simplifies mesh.
          */
         MeshPtr Simplify(MeshPtr mesh, float edgeMargin, char reduction) {
+#ifdef OE_SAFE
+            if (mesh->GetPrimitive() != TRIANGLES)
+                throw Exception("Unsupported geometry primitive.");
+#endif
             if (edgeMargin < 0)
                 edgeMargin = 0;
             
+
+            return mesh;
         }
 
     }
