@@ -11,6 +11,7 @@
 #include <Geometry/Mesh.h>
 #include <Geometry/GeometrySet.h>
 #include <Resources/DataBlock.h>
+#include <Logging/Logger.h>
 
 using namespace OpenEngine::Geometry;
 using namespace OpenEngine::Resources;
@@ -24,16 +25,18 @@ namespace OpenEngine {
             float unit = size / detail;
             
             unsigned int points = d * d;
-            float* v = new float[points];
-            float* n = new float[points];
-            float* c = new float[points];
+            logger.info << "Points " << points << logger.end;
+            
+            float* v = new float[3 * points];
+            float* n = new float[3 * points];
+            float* c = new float[3 * points];
             
             Float3DataBlockPtr vertices = Float3DataBlockPtr(new DataBlock<3, float>(v, points));
             Float3DataBlockPtr normals = Float3DataBlockPtr(new DataBlock<3, float>(n, points));
             Float3DataBlockPtr colors = Float3DataBlockPtr(new DataBlock<3, float>(c, points));
             GeometrySetPtr geom = GeometrySetPtr(new GeometrySet(vertices, normals, Resources::IDataBlockList(), colors));
 
-            unsigned int quads = detail * detail
+            unsigned int quads = detail * detail;
             unsigned int* i = new unsigned int[6 * quads];
             DataIndicesPtr indices = DataIndicesPtr(new DataIndices(i, 6 * quads));
 
@@ -51,23 +54,23 @@ namespace OpenEngine {
             for (unsigned int m = 0; m < detail; ++m){
                 for (unsigned int n = 0; n < detail; ++n){
                     // Index the (i, j)'th quad of 2 triangles
-                    i[index] = topOffset + m + n * d;
+                    i[index] = m + n * d;
                     ++index;
-                    i[index] = topOffset + m+1 + n * d;
+                    i[index] = m+1 + n * d;
                     ++index;
-                    i[index] = topOffset + m + (n+1) * d;
+                    i[index] = m + (n+1) * d;
                     ++index;
 
-                    i[index] = topOffset + m+1 + n * d;
+                    i[index] = m+1 + n * d;
                     ++index;
-                    i[index] = topOffset + m + (n+1) * d;
+                    i[index] = m + (n+1) * d;
                     ++index;
-                    i[index] = topOffset + m+1 + (n+1) * d;
+                    i[index] = m+1 + (n+1) * d;
                     ++index;
                 }
             }
             
-            return MeshPtr(new Mesh(indices, TRIANGLES, MaterialPtr(), geom));
+            return MeshPtr(new Mesh(indices, TRIANGLES, geom, MaterialPtr()));
         }
         
         MeshPtr CreateCube(float size, unsigned int detail, Vector<3, float> color){
@@ -127,7 +130,7 @@ namespace OpenEngine {
                 }
             }
             
-            return MeshPtr(new Mesh(indices, TRIANGLES, MaterialPtr(), geom));
+            return MeshPtr(new Mesh(indices, TRIANGLES, geom, MaterialPtr()));
         }
         
         MeshPtr CreateSphere(float radius, unsigned int detail, Vector<3, float> color){
