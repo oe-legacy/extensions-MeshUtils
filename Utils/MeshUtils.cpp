@@ -148,7 +148,7 @@ namespace OpenEngine {
          */
         MeshPtr Simplify(MeshPtr mesh, float edgeMargin, char reduction) {
 #ifdef OE_SAFE
-            if (mesh->GetPrimitive() != TRIANGLES)
+            if (mesh->GetType() != TRIANGLES)
                 throw Exception("Unsupported geometry primitive.");
 #endif
             if (edgeMargin < 0)
