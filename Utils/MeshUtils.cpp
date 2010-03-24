@@ -34,7 +34,7 @@ namespace OpenEngine {
 
             unsigned int quads = detail * detail;
             unsigned int* i = new unsigned int[6 * quads];
-            DataIndicesPtr indices = DataIndicesPtr(new DataIndices(6 * quads, i));
+            IndicesPtr indices = IndicesPtr(new Indices(6 * quads, i));
 
             Vector<3, float> normal = Vector<3, float>(0, 1, 0);
             for (unsigned int i = 0; i < d; ++i){
@@ -92,7 +92,7 @@ namespace OpenEngine {
             GeometrySetPtr geom = GeometrySetPtr(new GeometrySet(vertices, normals, Resources::IDataBlockList(), colors));
 
             unsigned int* i = new unsigned int[6 * points];
-            DataIndicesPtr indices = DataIndicesPtr(new DataIndices(6 * points, i));
+            IndicesPtr indices = IndicesPtr(new Indices(6 * points, i));
 
             // Top side geometry
             Vector<3, float> normal = Vector<3, float>(0, 1, 0);
