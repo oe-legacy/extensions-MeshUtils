@@ -9,6 +9,7 @@
 
 #include <Utils/MeshUtils.h>
 #include <Geometry/Mesh.h>
+#include <Geometry/Material.h>
 #include <Geometry/GeometrySet.h>
 #include <Resources/DataBlock.h>
 #include <Logging/Logger.h>
@@ -25,20 +26,15 @@ namespace OpenEngine {
             float unit = size / detail;
             
             unsigned int points = d * d;
-            logger.info << "Points " << points << logger.end;
             
-            float* v = new float[3 * points];
-            float* n = new float[3 * points];
-            float* c = new float[3 * points];
-            
-            Float3DataBlockPtr vertices = Float3DataBlockPtr(new DataBlock<3, float>(v, points));
-            Float3DataBlockPtr normals = Float3DataBlockPtr(new DataBlock<3, float>(n, points));
-            Float3DataBlockPtr colors = Float3DataBlockPtr(new DataBlock<3, float>(c, points));
+            Float3DataBlockPtr vertices = Float3DataBlockPtr(new DataBlock<3, float>(points));
+            Float3DataBlockPtr normals = Float3DataBlockPtr(new DataBlock<3, float>(points));
+            Float3DataBlockPtr colors = Float3DataBlockPtr(new DataBlock<3, float>(points));
             GeometrySetPtr geom = GeometrySetPtr(new GeometrySet(vertices, normals, Resources::IDataBlockList(), colors));
 
             unsigned int quads = detail * detail;
             unsigned int* i = new unsigned int[6 * quads];
-            DataIndicesPtr indices = DataIndicesPtr(new DataIndices(i, 6 * quads));
+            DataIndicesPtr indices = DataIndicesPtr(new DataIndices(6 * quads, i));
 
             Vector<3, float> normal = Vector<3, float>(0, 1, 0);
             for (unsigned int i = 0; i < d; ++i){
@@ -70,7 +66,7 @@ namespace OpenEngine {
                 }
             }
             
-            return MeshPtr(new Mesh(indices, TRIANGLES, geom, MaterialPtr()));
+            return MeshPtr(new Mesh(indices, TRIANGLES, geom, MaterialPtr(new Material())));
         }
         
         MeshPtr CreateCube(float size, unsigned int detail, Vector<3, float> color){
@@ -86,17 +82,17 @@ namespace OpenEngine {
             unsigned int backOffset = 5 * d * d;
             
             unsigned int points = 6 * d * d;
-            float* v = new float[points];
-            float* n = new float[points];
-            float* c = new float[points];
+            float* v = new float[3 * points];
+            float* n = new float[3 * points];
+            float* c = new float[3 * points];
             
-            Float3DataBlockPtr vertices = Float3DataBlockPtr(new DataBlock<3, float>(v, points));
-            Float3DataBlockPtr normals = Float3DataBlockPtr(new DataBlock<3, float>(n, points));
-            Float3DataBlockPtr colors = Float3DataBlockPtr(new DataBlock<3, float>(c, points));
+            Float3DataBlockPtr vertices = Float3DataBlockPtr(new DataBlock<3, float>(points, v));
+            Float3DataBlockPtr normals = Float3DataBlockPtr(new DataBlock<3, float>(points, n));
+            Float3DataBlockPtr colors = Float3DataBlockPtr(new DataBlock<3, float>(points, c));
             GeometrySetPtr geom = GeometrySetPtr(new GeometrySet(vertices, normals, Resources::IDataBlockList(), colors));
 
             unsigned int* i = new unsigned int[6 * points];
-            DataIndicesPtr indices = DataIndicesPtr(new DataIndices(i, /*6 * */points));
+            DataIndicesPtr indices = DataIndicesPtr(new DataIndices(6 * points, i));
 
             // Top side geometry
             Vector<3, float> normal = Vector<3, float>(0, 1, 0);
@@ -130,7 +126,7 @@ namespace OpenEngine {
                 }
             }
             
-            return MeshPtr(new Mesh(indices, TRIANGLES, geom, MaterialPtr()));
+            return MeshPtr(new Mesh(indices, TRIANGLES, geom, MaterialPtr(new Material())));
         }
         
         MeshPtr CreateSphere(float radius, unsigned int detail, Vector<3, float> color){
