@@ -17,13 +17,15 @@
 
 #include <algorithm>
 #include <vector>
-#include <limits>
+#include <limits.h>
+#include <cstring>
 
 using namespace OpenEngine::Geometry;
 using namespace OpenEngine::Resources;
 
 namespace OpenEngine {
     namespace Utils {
+
 
         struct VertexPair {
             unsigned int v1;
