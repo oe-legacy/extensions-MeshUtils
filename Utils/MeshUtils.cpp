@@ -57,10 +57,6 @@ namespace OpenEngine {
                     unsigned int index = i + j * d;
                     Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, halfSize, j * unit - halfSize);
                     
-                    // @TODO temporary displacement. Only used while
-                    // creating simplyfication
-                    vertex[1] = vertex.GetLength();
-
                     vertices->SetElement(index, vertex);
                     normals->SetElement(index, normal);
                     colors->SetElement(index, color);
@@ -278,7 +274,7 @@ namespace OpenEngine {
                 
                 Vector<3, double> normal = (span1 % span2);
                 normal.Normalize();
-                logger.info << "Normal " << normal << logger.end;
+                //logger.info << "Normal " << normal << logger.end;
 
                 float a = normal[0];
                 float b = normal[1];
@@ -405,13 +401,14 @@ namespace OpenEngine {
             }
 
             /**
-             * Remove degenerate triangles from the indices.
+             * Create a new mesh from the collapsed vertices.
              */
             
 
             /**
-             * Create a new mesh from the collapsed vertices.
+             * Remove degenerate triangles from the indices.
              */
+            
 
             return mesh;
         }
