@@ -26,6 +26,10 @@ namespace OpenEngine {
         class GeometrySet;
         typedef boost::shared_ptr<GeometrySet> GeometrySetPtr;
     }
+    namespace Resources {
+        class Indices;
+        typedef boost::shared_ptr<Indices> IndicesPtr;
+    }
     namespace Utils {
 
         //@TODO Enclose all this in a class of static methods.
@@ -75,6 +79,7 @@ namespace OpenEngine {
         
         Geometry::MeshPtr Simplify(Geometry::MeshPtr mesh, float edgeMargin = 0, char reduction = 75);
         VertexAttr CreateVertexAttr(Geometry::GeometrySetPtr geom, unsigned int i);
+        Resources::IndicesPtr RemoveDegenerates(Resources::IndicesPtr i);
     }
 }
 

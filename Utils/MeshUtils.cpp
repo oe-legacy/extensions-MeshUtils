@@ -428,6 +428,33 @@ namespace OpenEngine {
             }
             return VertexAttr(v, n, c, tc);
         }
+
+        /**
+         * Eliminates degenerate triangles from a list of indices.
+         *
+         * @param i The list of indices to be reduced.
+         *
+         * @return the new list of indices.
+         */
+        IndicesPtr RemoveDegenerates(IndicesPtr i){
+            unsigned int* tmp = new unsigned int[i->GetSize()];
+            unsigned int offset = 0;
+            unsigned int k = 0;            
+            for (k = 0; k < i->GetSize(); k += 3) {
+                unsigned int i1 = i->GetData()[k];
+                unsigned int i2 = i->GetData()[k+1];
+                unsigned int i3 = i->GetData()[k+2];
+                if (i1 != i2 && i1 != i3 && i2 != i3){
+                    tmp[offset++] = i1;
+                    tmp[offset++] = i2;
+                    tmp[offset++] = i3;
+                }
+            }
+            
+            unsigned int* indices = new unsigned int[k];
+            memcpy(indices, tmp, offset * sizeof(unsigned int));
+            return IndicesPtr(new Indices(k, indices));
+        }
         
     }
 }
