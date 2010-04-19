@@ -14,6 +14,7 @@
 #include <Math/Vector.h>
 
 #include <list>
+#include <vector>
 
 using namespace std;
 
@@ -32,8 +33,6 @@ namespace OpenEngine {
     }
     namespace Utils {
 
-        //@TODO Enclose all this in a class of static methods.
-        
         /**
          * Is this the basis for a point class?
          * Could be useful both here and in a triangle/face class.
@@ -43,8 +42,9 @@ namespace OpenEngine {
             Vector<3, float> norm;
             Vector<4, float> color;
             list<Vector<3, float> > texCoords;
+            bool live;
 
-            VertexAttr operator*(const float s){
+            VertexAttr operator*=(const float s){
                 vec *= s;
                 norm *= s;
                 color *= s;
@@ -56,7 +56,7 @@ namespace OpenEngine {
                 return *this;
             }
 
-            VertexAttr operator+(const VertexAttr a){
+            VertexAttr operator+=(const VertexAttr a){
                 vec += a.vec;
                 norm += a.norm;
                 color += a.color;
@@ -70,16 +70,17 @@ namespace OpenEngine {
             }
             
             VertexAttr(Vector<4, float> v, Vector<3, float> n, Vector<4, float> c, list<Vector<3, float> > t)
-                : vec(v), norm(n), color(c), texCoords(t) {}
+                : vec(v), norm(n), color(c), texCoords(t) {
+                live = true;
+            }
         };
 
-        Geometry::MeshPtr CreatePlane(float size, Vector<3, float> color, unsigned int detail = 1);
-        Geometry::MeshPtr CreateCube(float size, Vector<3, float> color, unsigned int detail);
-        Geometry::MeshPtr CreateSphere(float radius, Vector<3, float> color, unsigned int detail);
-        
         Geometry::MeshPtr Simplify(Geometry::MeshPtr mesh, float edgeMargin = 0, char reduction = 75);
         VertexAttr CreateVertexAttr(Geometry::GeometrySetPtr geom, unsigned int i);
+        unsigned int GetContractedIndex(unsigned int i, unsigned int* contractedTo);
+        Resources::IndicesPtr UpdateIndices(Resources::IndicesPtr i, unsigned int* contractedTo);
         Resources::IndicesPtr RemoveDegenerates(Resources::IndicesPtr i);
+        Geometry::GeometrySetPtr CreateGeometry(Geometry::GeometrySetPtr original, vector<VertexAttr> attrs, unsigned int contractions);
     }
 }
 

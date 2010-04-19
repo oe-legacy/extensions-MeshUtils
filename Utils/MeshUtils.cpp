@@ -30,190 +30,15 @@ namespace OpenEngine {
         struct VertexPair {
             unsigned int v1;
             unsigned int v2;
-            VertexAttr p;
             double error;
             
             bool operator<(const VertexPair& p){
                 return this->error < p.error;
             }
             
-            VertexPair(unsigned int vert1, unsigned int vert2, VertexAttr a, double err)
-                : v1(vert1), v2(vert2), p(a), error(err) {}
+            VertexPair(unsigned int vert1, unsigned int vert2, double err)
+                : v1(vert1), v2(vert2), error(err) {}
         };
-
-        MeshPtr CreatePlane(float size, Vector<3, float> color, unsigned int detail){
-            unsigned int d = detail + 1;
-            float halfSize = size / 2;
-            float unit = size / detail;
-            
-            unsigned int points = d * d;
-            
-            Float3DataBlockPtr vertices = Float3DataBlockPtr(new DataBlock<3, float>(points));
-            Float3DataBlockPtr normals = Float3DataBlockPtr(new DataBlock<3, float>(points));
-            Float3DataBlockPtr colors = Float3DataBlockPtr(new DataBlock<3, float>(points));
-            GeometrySetPtr geom = GeometrySetPtr(new GeometrySet(vertices, normals, Resources::IDataBlockList(), colors));
-
-            Vector<3, float> normal = Vector<3, float>(0, 1, 0);
-            for (unsigned int i = 0; i < d; ++i){
-                for (unsigned int j = 0; j < d; ++j){
-                    unsigned int index = i + j * d;
-                    Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, halfSize, j * unit - halfSize);
-                    
-                    vertices->SetElement(index, vertex);
-                    normals->SetElement(index, normal);
-                    colors->SetElement(index, color);
-                }
-            }
-
-            unsigned int quads = detail * detail;
-            unsigned int* i = new unsigned int[6 * quads];
-            IndicesPtr indices = IndicesPtr(new Indices(6 * quads, i));
-
-            unsigned int index = 0;
-            for (unsigned int m = 0; m < detail; ++m){
-                for (unsigned int n = 0; n < detail; ++n){
-                    // Index the (i, j)'th quad of 2 triangles
-                    i[index++] = m + n * d;
-                    i[index++] = m + (n+1) * d;
-                    i[index++] = m+1 + n * d;
-
-                    i[index++] = m+1 + n * d;
-                    i[index++] = m + (n+1) * d;
-                    i[index++] = m+1 + (n+1) * d;
-                }
-            }
-            
-            return MeshPtr(new Mesh(indices, TRIANGLES, geom, MaterialPtr(new Material())));
-        }
-        
-        MeshPtr CreateCube(float size, Vector<3, float> color, unsigned int detail){
-            unsigned int d = detail + 1;
-            float halfSize = size / 2;
-            float unit = size / detail;
-
-            enum sides {TOP = 0, BOTTOM = 1, LEFT = 2, RIGHT = 3, FRONT = 4, BACK = 5};
-            
-            unsigned int topOffset = 0;
-            unsigned int bottomOffset = d * d;
-            unsigned int leftOffset = 2 * d * d;
-            unsigned int rightOffset = 3 * d * d;
-            unsigned int frontOffset = 4 * d * d;
-            unsigned int backOffset = 5 * d * d;
-            
-            unsigned int points = 6 * d * d;
-
-            Float3DataBlockPtr vertices = Float3DataBlockPtr(new DataBlock<3, float>(points));
-            Float3DataBlockPtr normals = Float3DataBlockPtr(new DataBlock<3, float>(points));
-            Float3DataBlockPtr colors = Float3DataBlockPtr(new DataBlock<3, float>(points));
-            GeometrySetPtr geom = GeometrySetPtr(new GeometrySet(vertices, normals, Resources::IDataBlockList(), colors));
-
-            // Top side geometry
-            for (unsigned int i = 0; i < d; ++i){
-                for (unsigned int j = 0; j < d; ++j){
-                    unsigned int index = i + j * d;
-                    Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, halfSize, j * unit - halfSize);
-                    vertices->SetElement(index, vertex);
-                    normals->SetElement(index, Vector<3, float>(0, 1, 0));
-                }
-            }
-            // Bottom geometry
-            for (unsigned int i = 0; i < d; ++i){
-                for (unsigned int j = 0; j < d; ++j){
-                    unsigned int index = bottomOffset + i + j * d;
-                    Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, -halfSize, j * unit - halfSize);
-                    vertices->SetElement(index, vertex);
-                    normals->SetElement(index, Vector<3, float>(0, -1, 0));
-                }
-            }
-            // Front geometry
-            for (unsigned int i = 0; i < d; ++i){
-                for (unsigned int j = 0; j < d; ++j){
-                    unsigned int index = frontOffset + i + j * d;
-                    Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, j * unit - halfSize, halfSize);
-                    vertices->SetElement(index, vertex);
-                    normals->SetElement(index, Vector<3, float>(0, 0, 1));
-                }
-            }
-            // Back geometry
-            for (unsigned int i = 0; i < d; ++i){
-                for (unsigned int j = 0; j < d; ++j){
-                    unsigned int index = backOffset + i + j * d;
-                    Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, j * unit - halfSize, -halfSize);
-                    vertices->SetElement(index, vertex);
-                    normals->SetElement(index, Vector<3, float>(0, 0, -1));
-                }
-            }
-            // Right side geometry
-            for (unsigned int i = 0; i < d; ++i){
-                for (unsigned int j = 0; j < d; ++j){
-                    unsigned int index = rightOffset + i + j * d;
-                    Vector<3, float> vertex = Vector<3, float>(halfSize, i * unit - halfSize, j * unit - halfSize);
-                    vertices->SetElement(index, vertex);
-                    normals->SetElement(index, Vector<3, float>(1, 0, 0));
-                }
-            }
-            // Left side geometry
-            for (unsigned int i = 0; i < d; ++i){
-                for (unsigned int j = 0; j < d; ++j){
-                    unsigned int index = leftOffset + i + j * d;
-                    Vector<3, float> vertex = Vector<3, float>(-halfSize, i * unit - halfSize, j * unit - halfSize);
-                    vertices->SetElement(index, vertex);
-                    normals->SetElement(index, Vector<3, float>(-1, 0, 0));
-                }
-            }
-
-            // colors
-            for (unsigned int i = 0; i < colors->GetSize(); ++ i)
-                colors->SetElement(i, color);
-
-            IndicesPtr indices = IndicesPtr(new Indices(36 * detail * detail));
-            unsigned int* i = indices->GetData();
-
-            // Top side indices
-            unsigned int index = 0;
-            for (unsigned int k = 0; k < 6; ++k){
-                unsigned int offset = k * d * d;
-                for (unsigned int m = 0; m < detail; ++m){
-                    for (unsigned int n = 0; n < detail; ++n){
-                        // Index the (i, j)'th quad of 2 triangles
-                        if (k == LEFT || k == TOP || k == BACK){
-                            i[index++] = offset + m + n * d;
-                            i[index++] = offset + m + (n+1) * d;
-                            i[index++] = offset + m+1 + n * d;
-                            
-                            i[index++] = offset + m+1 + n * d;
-                            i[index++] = offset + m + (n+1) * d;
-                            i[index++] = offset + m+1 + (n+1) * d;
-                        }else{
-                            i[index++] = offset + m + n * d;
-                            i[index++] = offset + m+1 + n * d;
-                            i[index++] = offset + m + (n+1) * d;
-                            
-                            i[index++] = offset + m+1 + n * d;
-                            i[index++] = offset + m+1 + (n+1) * d;
-                            i[index++] = offset + m + (n+1) * d;
-                        }
-                    }
-                }
-            }
-
-            return MeshPtr(new Mesh(indices, TRIANGLES, geom, MaterialPtr(new Material())));
-        }
-        
-        MeshPtr CreateSphere(float radius, Vector<3, float> color, unsigned int detail){
-            MeshPtr mesh = CreateCube(radius, color, detail);
-            DataBlock<3, float>* vertices = (DataBlock<3, float>*) mesh->GetGeometrySet()->GetVertices().get();
-            DataBlock<3, float>* normals = (DataBlock<3, float>*) mesh->GetGeometrySet()->GetNormals().get();
-            
-            for (unsigned int i = 0; i < vertices->GetSize(); ++i){
-                Vector<3, float> vert = vertices->GetElement(i);
-                vert.Normalize();
-                normals->SetElement(i, vert);
-                vertices->SetElement(i, vert * radius);
-            }
-            
-            return mesh;
-        }
 
         /**
          * This method takes a mesh and simplifies it, meaning making
@@ -247,13 +72,11 @@ namespace OpenEngine {
             DataBlock<3, float>* vertices = (DataBlock<3, float>*) geom->GetVertices().get();
             unsigned int points = vertices->GetSize();
             IndicesPtr indices = mesh->GetIndices();
-            unsigned int triangles = indices->GetSize() / 3;
-            unsigned int collapses = points - (points * reduction) / 100.0f;
+            unsigned int maxContractions = points - (points * reduction) / 100.0f;
 
             logger.info << "Points " << points << logger.end;
             logger.info << "Indices " << indices->GetSize() << logger.end;
-            logger.info << "Triangles " << triangles << logger.end;
-            logger.info << "Collapses to perform " << collapses << logger.end;
+            logger.info << "Contractions to perform " << maxContractions << logger.end;
 
             // Create and calculate quadrics
             Matrix<4, 4, double> quadrics[points];
@@ -318,101 +141,154 @@ namespace OpenEngine {
             /**
              * Create the collapsable vector of vertice attributes.
              */
-            vector<VertexAttr> verticeAttr;
+            vector<VertexAttr> vertexAttrs;
             for (unsigned int i = 0; i < points; ++i){
-                verticeAttr.push_back(CreateVertexAttr(geom, i));
+                vertexAttrs.push_back(CreateVertexAttr(geom, i));
             }
 
-            vector<list<VertexPair*> > vertexPairs = vector<list<VertexPair*> >(points);
-
             /**
-             * Create a list of pairs that can be collapsed.
+             * A reference to the pairs that the i'th vertex is 
              */
-            list<VertexPair*> collapsables;
+            vector<list<VertexPair*> > vertexPairs = vector<list<VertexPair*> >(points);
+            
+            /**
+             * Create a list of pairs that can be contracted.
+             */
+            list<VertexPair*> contractables;
             for (unsigned int i = 0; i < points; ++i){
                 Vector<3, float> v = (*vertices)[i];
-                Vector<4, float> v1 = Vector<4, float>(v[0], v[1], v[2], 1);
-
+                Vector<4, double> v1 = Vector<4, double>(v[0], v[1], v[2], 1);
+                
                 list<unsigned int>::iterator nStart = neighbours[i].begin();
                 list<unsigned int>::iterator nEnd = neighbours[i].end();
-
+                
                 for (unsigned int j = i; j < points; ++j){
                     Vector<3, float> v = (*vertices)[j];
-                    Vector<4, float> v2 = Vector<4, float>(v[0], v[1], v[2], 1);
-                
+                    Vector<4, double> v2 = Vector<4, double>(v[0], v[1], v[2], 1);
+                    
                     // If either the vertices are neighbours or the
                     // distance between them is low enough the pair
                     // can be considered for contraction.
                     if (find(nStart, nEnd, j) != nEnd || 
                         (v1 - v2).GetLength() < edgeMargin) {
+
+                        // The error term can be mathematically
+                        // reduced to a lookup into the inverse error
+                        // matrix.
+                        
+                        // double error = quad.GetInverse()(3, 3);
+                        
+                        // This of course has to handle the special
+                        // case where the matrix isn't invertible. The
+                        // error then is probably 0 and a good new
+                        // vector is (v1 + v2 / 2).
                         
                         Matrix<4, 4, double> quad = quadrics[i] + quadrics[j];
-                        float bias1 = 0.5f;
-                        float bias2 = 0.5f;
-                        VertexAttr attr = verticeAttr[i] * bias1 + verticeAttr[j] * bias2;
+                        Vector<4, double> vec = ((v1 + v2) / 2.0).ToDouble();
                         
-                        double error = (quad * attr.vec.ToDouble()) * attr.vec.ToDouble();
+                        double error = (quad * vec) * vec;
                         
-                        VertexPair* pair = new VertexPair(i, j, attr, error);
-
-                        collapsables.push_back(pair);
-
+                        VertexPair* pair = new VertexPair(i, j, error);
+                        
+                        contractables.push_back(pair);
+                        
                         vertexPairs[i].push_back(pair);
                         vertexPairs[j].push_back(pair);
                     }
                 }
             }
             neighbours.clear();
-
+            
             /**
              * Sort the list in increasing order, so we can start
              * collapsing the least important pairs first.
              */
-            collapsables.sort();
-
+            contractables.sort();
+            
             /**
              * Collapse the pairs. After each collapse the new vertex
              * is inserted into the pair list and the indices is
-             * updated. Also a flag is set indicating the vertex that
-             * was removed.
+             * updated. Also the vertex removed must point to it's new
+             * index.
              */
-            unsigned int collapsed[points];
+            unsigned int contractedTo[points];
             for (unsigned int i = 0; i < points; ++i)
-                collapsed[i] = UINT_MAX;
-
+                contractedTo[i] = UINT_MAX;
+            
             IndicesPtr newIs = IndicesPtr(new Indices(indices->GetSize()));
             memcpy(newIs->GetData(), indices->GetData(), indices->GetSize());
+            
+            unsigned int contractions = 0;
+            while (contractions < maxContractions && 0 < contractables.size()){
+                //logger.info << "Contractions performed " << contractions << logger.end;
+                VertexPair* pair = contractables.front();
+                //logger.info << pair->v1 << " and " << pair->v2 << logger.end;
+                unsigned int i = GetContractedIndex(pair->v1, contractedTo);
+                unsigned int j = GetContractedIndex(pair->v2, contractedTo);
+                //logger.info << pair->v1 << " has been moved to " << i << logger.end;
+                //logger.info << pair->v2 << " has been moved to " << j << logger.end;
+                
+                if (i != j){
 
-            while (collapses > 0 && collapsables.size() > 0){
-                VertexPair* pair = collapsables.front();
-                unsigned int updatedIndex = pair->v1;
-                unsigned int deletedIndex = pair->v2;
+                    // Sanity check
+                    if (vertexAttrs[i].live == false ||
+                        vertexAttrs[j].live == false)
+                        logger.info << "WTF! A dead vertex made it through." << logger.end;
+                
+                    Matrix<4, 4, double> quadric = quadrics[i] + quadrics[j];
+                    
+                    // New vertex attr
+                    Vector<4, double> vec;
+                    if (quadric.GetDeterminant() != 0.0)
+                        vec = quadric.GetInverse() * Vector<4, double>(0, 0, 0, 1);
+                    else{
+                        Vector<3, float> v = (*vertices)[i] + (*vertices)[j];
+                        vec = Vector<4, double>(v[0], v[1], v[2], 0);
+                    }
+                    
+                    // Contract the vertex attributes based on a bias
+                    // calculated from vec.
+                    float bias1 = (Vector<3, float>(vec[0], vec[1], vec[2]) - (*vertices)[i]).GetLengthSquared();
+                    float bias2 = (Vector<3, float>(vec[0], vec[1], vec[2]) - (*vertices)[j]).GetLengthSquared();
+                    vertexAttrs[i] *= bias1;
+                    vertexAttrs[j] *= bias2;
+                    vertexAttrs[i] += vertexAttrs[j];
+                    vertexAttrs[i].vec = Vector<4, float>(vec[0], vec[1], vec[2], vec[3]);
+                    
+                    // Update the quadric errors for the new Vertex
+                    quadrics[i] = quadric;
 
-                // Update geometry
-                verticeAttr[updatedIndex] = pair->p;
+                    // Update the contracted to reference and number of contractions.
+                    contractedTo[j] = i;
+                    vertexAttrs[j].live = false;
+                    contractions++;
+                }
 
-                // Update neighbours neighbours
-
-                // Update errors
-
-                // Update indices in the new indices, the pairs and the collapsables.
-
-                collapsed[deletedIndex] = updatedIndex;
-                collapsables.pop_front();
-                --collapses;
+                contractables.pop_front();
             }
-
+                
             /**
              * Create a new mesh from the collapsed vertices.
              */
+            GeometrySetPtr newGeom = CreateGeometry(geom, vertexAttrs, contractions);
             
-
             /**
-             * Remove degenerate triangles from the indices.
+             * Update the indices based on information in
+             * contractedTo and then remove degenerate triangles.
              */
-            
+            logger.info << "Original indices " << indices->ToString() << logger.end;
+            IndicesPtr newIndices = UpdateIndices(indices, contractedTo);
+            logger.info << "New indices " << newIndices->ToString() << logger.end;
+            newIndices = RemoveDegenerates(newIndices);
+            logger.info << "New indices " << newIndices << logger.end;
 
             return mesh;
+            /*
+            return MeshPtr(new Mesh(newIndices, 
+                                    TRIANGLES, 
+                                    geom, 
+                                    mesh->GetMaterial()));
+            */
         }
 
         /**
@@ -429,6 +305,37 @@ namespace OpenEngine {
                 ++itr;
             }
             return VertexAttr(v, n, c, tc);
+        }
+
+        /**
+         * If the vertex at index i, has been contracted into another
+         * index, then contractedTo is recursively searched until the
+         * final index is found.
+         *
+         * @param i The original index.
+         * @param contractedTo An array of indices that an index has
+         * been contracted into.
+         *
+         * @return The index of the vertex after the previous contractions.
+         */
+        unsigned int GetContractedIndex(unsigned int i, unsigned int* contractedTo){
+            unsigned int j = i;
+            while (contractedTo[j] != UINT_MAX)
+                j = contractedTo[j];
+            
+            return j;
+        }
+            
+        /**
+         * Updates the indices based on which new index the original
+         * index was contracted to.
+         */
+        IndicesPtr UpdateIndices(IndicesPtr i, unsigned int* contractedTo){
+            IndicesPtr ret = IndicesPtr(new Indices(i->GetSize()));
+            for (unsigned int j = 0; j < i->GetSize(); ++j)
+                ret->GetData()[j] = GetContractedIndex(i->GetData()[j], contractedTo);
+            
+            return ret;
         }
 
         /**
@@ -455,7 +362,40 @@ namespace OpenEngine {
             
             unsigned int* indices = new unsigned int[k];
             memcpy(indices, tmp, offset * sizeof(unsigned int));
-            return IndicesPtr(new Indices(k, indices));
+            return IndicesPtr(new Indices(offset, indices));
+        }
+        
+        GeometrySetPtr CreateGeometry(GeometrySetPtr original, vector<VertexAttr> attrs, unsigned int size){
+            IDataBlockPtr vertices = IDataBlockPtr();
+            if (original->GetVertices() != NULL){
+                unsigned int size = original->GetVertices()->GetSize();
+                if (original->GetVertices()->GetDimension() == 3){
+                    Float3DataBlockPtr vs = Float3DataBlockPtr(new DataBlock<3, float>(size));
+                    unsigned int o = 0;
+                    for (unsigned int i = 0; i < size; ++i){
+                        if (attrs[i+o].live){
+                            Vector<4, float> v = attrs[i].vec;
+                            Vector<3, float> vec = Vector<3, float>(v[0],v[1],v[2]);
+                            vs->SetElement(i, vec);
+                        }else
+                            o += 1;
+                    }
+                    vertices = vs;
+                    
+                }else if (original->GetVertices()->GetDimension() == 4){
+                    Float4DataBlockPtr vs = Float4DataBlockPtr(new DataBlock<4, float>(size));
+                    unsigned int o = 0;
+                    for (unsigned int i = 0; i < size; ++i){
+                        if (attrs[i+o].live){
+                            vs->SetElement(i, attrs[i].vec);
+                        }else
+                            o += 1;
+                    }
+                    vertices = vs;
+                }
+            }
+            
+            return GeometrySetPtr();
         }
         
     }

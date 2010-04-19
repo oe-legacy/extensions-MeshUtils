@@ -2,6 +2,8 @@ SET ( EXTENSION_NAME "Extensions_MeshUtils")
 
 # Create the extension library
 ADD_LIBRARY( ${EXTENSION_NAME}
+  Utils/MeshCreator.h
+  Utils/MeshCreator.cpp
   Utils/MeshUtils.h
   Utils/MeshUtils.cpp
 )
