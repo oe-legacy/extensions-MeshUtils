@@ -22,16 +22,20 @@ namespace OpenEngine {
     }
     namespace Utils {
 
-        Geometry::MeshPtr CreatePlane(float size, 
-                                      unsigned int detail = 1, 
-                                      Vector<3, float> color = Vector<3, float>());
-        Geometry::MeshPtr CreateCube(float size, 
-                                     unsigned int detail = 1, 
-                                     Vector<3, float> color = Vector<3, float>());
-        Geometry::MeshPtr CreateSphere(float radius, 
-                                       unsigned int detail = 1, 
-                                       Vector<3, float> color = Vector<3, float>(), 
-                                       bool inverted = false);
+        namespace MeshCreator {
+
+            Geometry::MeshPtr CreatePlane(float size, 
+                                          unsigned int detail = 1, 
+                                          Vector<3, float> color = Vector<3, float>());
+            Geometry::MeshPtr CreateCube(float size, 
+                                         unsigned int detail = 1, 
+                                         Vector<3, float> color = Vector<3, float>());
+            Geometry::MeshPtr CreateSphere(float radius, 
+                                           unsigned int detail = 1, 
+                                           Vector<3, float> color = Vector<3, float>(), 
+                                           bool inverted = false);
+
+        }
 
     }
 }
