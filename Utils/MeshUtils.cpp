@@ -58,7 +58,7 @@ namespace OpenEngine {
             // supported.
             if (mesh->GetType() != TRIANGLES)
                 return mesh;
-            if (mesh->GetGeometrySet()->GetVertices()->GetType() != FLOAT)
+            if (mesh->GetGeometrySet()->GetVertices()->GetType() != Types::FLOAT)
                 return mesh;
             if (mesh->GetGeometrySet()->GetVertices()->GetDimension() != 3)
                 return mesh;
