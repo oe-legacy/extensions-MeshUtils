@@ -23,26 +23,44 @@ namespace OpenEngine {
     namespace Utils {
         namespace MeshCreator {
 
-            MeshPtr CreatePlane(float size, unsigned int detail, Vector<3, float> color){
+            MeshPtr CreatePlane(float size, unsigned int detail,
+                                Vector<3, float> color){
                 unsigned int d = detail + 1;
                 float halfSize = size / 2;
                 float unit = size / detail;
             
                 unsigned int points = d * d;
             
-                Float3DataBlockPtr vertices = Float3DataBlockPtr(new DataBlock<3, float>(points));
-                Float3DataBlockPtr normals = Float3DataBlockPtr(new DataBlock<3, float>(points));
-                Float3DataBlockPtr colors = Float3DataBlockPtr(new DataBlock<3, float>(points));
-                GeometrySetPtr geom = GeometrySetPtr(new GeometrySet(vertices, normals, Resources::IDataBlockList(), colors));
+                Float3DataBlockPtr vertices =
+                    Float3DataBlockPtr(new DataBlock<3, float>(points));
+                Float3DataBlockPtr normals =
+                    Float3DataBlockPtr(new DataBlock<3, float>(points));
+                IDataBlockList texCoordList;            
+                Float2DataBlockPtr texCoords = 
+                    Float2DataBlockPtr(new DataBlock<2, float>(points));
+                texCoordList.push_back(texCoords);
+
+                Float3DataBlockPtr colors = 
+                    Float3DataBlockPtr(new DataBlock<3, float>(points));
+                GeometrySetPtr geom = 
+                    GeometrySetPtr(new GeometrySet(vertices, 
+                                                   normals, 
+                                                   texCoordList,
+                                                   colors));
 
                 Vector<3, float> normal = Vector<3, float>(0, 1, 0);
                 for (unsigned int i = 0; i < d; ++i){
                     for (unsigned int j = 0; j < d; ++j){
                         unsigned int index = i + j * d;
-                        Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, halfSize, j * unit - halfSize);
+                        Vector<3, float> vertex(i * unit - halfSize,
+                                                halfSize, 
+                                                j * unit - halfSize);
                     
                         vertices->SetElement(index, vertex);
                         normals->SetElement(index, normal);
+                        Vector<2,float> texCoord( ((float)i)/detail,
+                                                  ((float)j)/detail);
+                        texCoords->SetElement(index, texCoord);
                         colors->SetElement(index, color);
                     }
                 }
@@ -65,7 +83,8 @@ namespace OpenEngine {
                     }
                 }
             
-                return MeshPtr(new Mesh(indices, TRIANGLES, geom, MaterialPtr(new Material())));
+            return MeshPtr(new Mesh(indices, TRIANGLES, 
+                                    geom, MaterialPtr(new Material())));
             }
         
             MeshPtr CreateCube(float size, unsigned int detail, Vector<3, float> color){

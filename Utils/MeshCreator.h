@@ -21,22 +21,20 @@ namespace OpenEngine {
         typedef boost::shared_ptr<Mesh> MeshPtr;
     }
     namespace Utils {
-
         namespace MeshCreator {
 
             Geometry::MeshPtr CreatePlane(float size, 
                                           unsigned int detail = 1, 
-                                          Vector<3, float> color = Vector<3, float>());
+                                          Vector<3, float> color = Vector<3, float>(1.0f));
             Geometry::MeshPtr CreateCube(float size, 
                                          unsigned int detail = 1, 
-                                         Vector<3, float> color = Vector<3, float>());
+                                         Vector<3, float> color = Vector<3, float>(1.0f));
             Geometry::MeshPtr CreateSphere(float radius, 
                                            unsigned int detail = 1, 
-                                           Vector<3, float> color = Vector<3, float>(), 
+                                           Vector<3, float> color = Vector<3, float>(1.0f), 
                                            bool inverted = false);
 
         }
-
     }
 }
 
