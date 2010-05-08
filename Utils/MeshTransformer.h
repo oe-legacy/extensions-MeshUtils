@@ -17,14 +17,14 @@ using OpenEngine::Math::Vector;
 
 namespace OpenEngine {
     namespace Geometry {
-        class Mesh;
-        typedef boost::shared_ptr<Mesh> MeshPtr;
+        class GeometrySet;
+        typedef boost::shared_ptr<GeometrySet> GeometrySetPtr;
     }
     namespace Utils {
 
-        namespace MeshCreator {
+        namespace MeshTransformer {
 
-            Geometry::MeshPtr Translate(Geometry::MeshPtr mesh, Vector<3, float> move);
+            Geometry::GeometrySetPtr Translate(Geometry::GeometrySetPtr geom, Vector<3, float> move);
 
             /**
              * Remember to rotate the normals aswell when rotating.

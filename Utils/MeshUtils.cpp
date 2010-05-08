@@ -295,13 +295,19 @@ namespace OpenEngine {
          * Creates a VertexAttr from the i'th attributes in the GeometrySet.
          */
         VertexAttr CreateVertexAttr(GeometrySetPtr geom, unsigned int i){
-            Vector<4, float> v = Vector<4, float>((float*)geom->GetVertices()->GetVoidElement(i));
-            Vector<3, float> n = Vector<3, float>((float*)geom->GetNormals()->GetVoidElement(i));
-            Vector<4, float> c = Vector<4, float>((float*)geom->GetColors()->GetVoidElement(i));
+            Vector<4, float> v;// = Vector<4, float>((float*)geom->GetVertices()->GetVoidElement(i));
+            geom->GetVertices()->GetElement(i, v);
+            Vector<3, float> n;// = Vector<3, float>((float*)geom->GetNormals()->GetVoidElement(i));
+            geom->GetNormals()->GetElement(i, n);
+            Vector<4, float> c;// = Vector<4, float>((float*)geom->GetColors()->GetVoidElement(i));
+            geom->GetColors()->GetElement(i, c);
             list<Vector<3, float> > tc;
             list<IDataBlockPtr>::iterator itr = geom->GetTexCoords().begin();
             while(!geom->GetTexCoords().empty() && itr != geom->GetTexCoords().end()){
-                tc.push_back(Vector<3, float>((float*)(*itr)->GetVoidElement(i)));
+                Vector<3, float> t;
+                (*itr)->GetElement(i, t);
+                //tc.push_back(Vector<3, float>((float*)(*itr)->GetVoidElement(i)));
+                tc.push_back(t);
                 ++itr;
             }
             return VertexAttr(v, n, c, tc);

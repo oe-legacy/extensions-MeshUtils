@@ -8,16 +8,30 @@
 //--------------------------------------------------------------------
 
 #include <Utils/MeshTransformer.h>
-#include <Geometry/Mesh.h>
+#include <Geometry/GeometrySet.h>
+#include <Resources/IDataBlock.h>
+
+#include <Logging/Logger.h>
 
 using namespace OpenEngine::Geometry;
+using namespace OpenEngine::Resources;
 
 namespace OpenEngine {
     namespace Utils {
-        namespace MeshCreator {
+        namespace MeshTransformer {
             
-            MeshPtr Translate(MeshPtr mesh, Vector<3, float> move) {
-                
+            GeometrySetPtr Translate(GeometrySetPtr geom, Vector<3, float> move) {
+                GeometrySetPtr clone = geom->Clone();
+
+                IDataBlockPtr verts = clone->GetVertices();
+
+                for (unsigned int i = 0; i < verts->GetSize(); ++i){
+                    Vector<3, float> vert;
+                    verts->GetElement(i, vert);
+                    verts->SetElement(i, vert + move);
+                }
+
+                return clone;
             }
 
         }
