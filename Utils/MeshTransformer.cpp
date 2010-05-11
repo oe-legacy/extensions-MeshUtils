@@ -24,12 +24,7 @@ namespace OpenEngine {
                 GeometrySetPtr clone = geom->Clone();
 
                 IDataBlockPtr verts = clone->GetVertices();
-
-                for (unsigned int i = 0; i < verts->GetSize(); ++i){
-                    Vector<3, float> vert;
-                    verts->GetElement(i, vert);
-                    verts->SetElement(i, vert + move);
-                }
+                *verts += move;
 
                 return clone;
             }
