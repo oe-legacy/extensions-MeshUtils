@@ -53,7 +53,7 @@ namespace OpenEngine {
                     for (unsigned int j = 0; j < d; ++j){
                         unsigned int index = i + j * d;
                         Vector<3, float> vertex(i * unit - halfSize,
-                                                halfSize, 
+                                                0, 
                                                 j * unit - halfSize);
                     
                         vertices->SetElement(index, vertex);

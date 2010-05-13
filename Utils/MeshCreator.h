@@ -30,7 +30,7 @@ namespace OpenEngine {
                                          unsigned int detail = 1, 
                                          Vector<3, float> color = Vector<3, float>(1.0f));
             Geometry::MeshPtr CreateSphere(float radius, 
-                                           unsigned int detail = 1, 
+                                           unsigned int detail = 4, 
                                            Vector<3, float> color = Vector<3, float>(1.0f), 
                                            bool inverted = false);
 
