@@ -34,6 +34,12 @@ namespace OpenEngine {
                                            Vector<3, float> color = Vector<3, float>(1.0f), 
                                            bool inverted = false);
 
+
+            Geometry::MeshPtr CreateGeodesicSphere(float radius,
+                                                   unsigned int detail,
+                                                   bool inverted = false,
+                                                   Vector<3, float> color =
+                                                   Vector<3, float>(1.0f) );
         }
     }
 }
