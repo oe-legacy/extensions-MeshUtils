@@ -508,8 +508,129 @@ namespace OpenEngine {
 
                 MeshPtr mesh = create(detail, radius, inverted, color);
                 return mesh;
-            }        
+            }
 
+            MeshPtr CreateCylinder(float radius, float height,
+                                             unsigned int detail,
+                                             Vector<3, float> color) {
+                
+                unsigned int d = detail + 3;
+                
+                unsigned int points = 4 * d + 2;
+                float radsPrSlice = 2.0 * 3.14 / float(d);
+
+                IndicesPtr indices = IndicesPtr(new Indices(12 * d));
+
+                Float3DataBlockPtr vertices =
+                    Float3DataBlockPtr(new DataBlock<3, float>(points));
+                Float3DataBlockPtr normals =
+                    Float3DataBlockPtr(new DataBlock<3, float>(points));
+                IDataBlockList texCoords;
+                Float3DataBlockPtr colors = 
+                    Float3DataBlockPtr(new DataBlock<3, float>(points));
+
+                GeometrySetPtr geom = 
+                    GeometrySetPtr(new GeometrySet(vertices, 
+                                                   normals, 
+                                                   texCoords,
+                                                   colors));
+                
+                unsigned int v = 0;
+                unsigned int n = 0;
+                unsigned int i = 0;
+
+                // Create the lid
+                vertices->SetElement(v++, Vector<3, float>(0, height / 2.0f, 0));
+                vertices->SetElement(v++, Vector<3, float>(radius, height / 2.0f, 0));
+                while (v < d + 1){
+                    Vector<3, float> point(radius * cos((v-1) * radsPrSlice), 
+                                           height / 2.0f,
+                                           radius * sin((v-1) * radsPrSlice));
+                    vertices->SetElement(v, point);
+
+                    indices->GetData()[i++] = 0;
+                    indices->GetData()[i++] = v - 1;
+                    indices->GetData()[i++] = v;
+
+                    v++;
+                }
+                indices->GetData()[i++] = 0;
+                indices->GetData()[i++] = 1;
+                indices->GetData()[i++] = v-1;
+
+                for (; n < v; ++n)
+                    normals->SetElement(n++, Vector<3, float>(0, 1, 0));
+                
+                // Create the bottom
+                vertices->SetElement(v++, Vector<3, float>(0, -height / 2.0f, 0));
+                vertices->SetElement(v++, Vector<3, float>(radius, -height / 2.0f, 0));
+                while (v < 2 * d + 2){
+                    Vector<3, float> point(radius * cos((v-d-2) * radsPrSlice), 
+                                           -height / 2.0f,
+                                           radius * sin((v-d-2) * radsPrSlice));
+                    vertices->SetElement(v, point);
+
+                    indices->GetData()[i++] = d + 1;
+                    indices->GetData()[i++] = v - 1;
+                    indices->GetData()[i++] = v;
+
+                    v++;
+                }
+                indices->GetData()[i++] = d + 1;
+                indices->GetData()[i++] = d + 2;
+                indices->GetData()[i++] = v-1;
+                
+                for (; n < v; ++n)
+                    normals->SetElement(n++, Vector<3, float>(0, -1, 0));
+
+                // Create the cylinder
+                Vector<3, float> topCenter(0, height / 2.0f, 0);
+
+                vertices->SetElement(v++, Vector<3, float>(radius, height / 2.0f, 0));
+                vertices->SetElement(v++, Vector<3, float>(radius, -height / 2.0f, 0));
+                normals->SetElement(n++, Vector<3, float>(1, 0, 0));
+                normals->SetElement(n++, Vector<3, float>(1, 0, 0));
+                for (unsigned int j = 1; j < d; ++j){
+                    Vector<3, float> point(radius * cos(j * radsPrSlice), 
+                                           height / 2.0f,
+                                           radius * sin(j * radsPrSlice));
+
+                    Vector<3, float>  normal = (point - topCenter).GetNormalize();
+
+                    vertices->SetElement(v++, point);
+                    normals->SetElement(n++, normal);
+
+                    indices->GetData()[i++] = v - 3;
+                    indices->GetData()[i++] = v - 2;
+                    indices->GetData()[i++] = v - 1;
+
+                    point[1] = -height / 2.0f;
+
+                    vertices->SetElement(v++, point);
+                    normals->SetElement(n++, normal);
+
+                    indices->GetData()[i++] = v - 3;
+                    indices->GetData()[i++] = v - 2;
+                    indices->GetData()[i++] = v - 1;
+                }
+
+                indices->GetData()[i++] = v - 2;
+                indices->GetData()[i++] = v - 1;
+                indices->GetData()[i++] = 2 * d + 2;
+                indices->GetData()[i++] = v - 1;
+                indices->GetData()[i++] = 2 * d + 2;
+                indices->GetData()[i++] = 2 * d + 3;
+
+                // Fill colors
+                for (unsigned int i = 0; i < colors->GetSize(); ++i){
+                    colors->SetElement(i, color);
+                }
+
+                return MeshPtr(new Mesh(indices, TRIANGLES, 
+                                        geom, MaterialPtr(new Material())));
+            }
+                
+                
         }
     }
 }

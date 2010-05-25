@@ -40,6 +40,10 @@ namespace OpenEngine {
                                                    bool inverted = false,
                                                    Vector<3, float> color =
                                                    Vector<3, float>(1.0f) );
+
+            Geometry::MeshPtr CreateCylinder(float radius, float height,
+                                             unsigned int detail = 5,
+                                             Vector<3, float> color = Vector<3, float>(1.0f));
         }
     }
 }
