@@ -444,8 +444,8 @@ namespace OpenEngine {
                 Float3DataBlockPtr normals =
                     Float3DataBlockPtr(new DataBlock<3, float>(points));
                 IDataBlockList texCoordList;            
-                Float2DataBlockPtr texCoords = 
-                    Float2DataBlockPtr(new DataBlock<2, float>(points));
+                Float3DataBlockPtr texCoords = 
+                    Float3DataBlockPtr(new DataBlock<3, float>(points));
                 texCoordList.push_back(texCoords);
                 Float3DataBlockPtr colors = 
                     Float3DataBlockPtr(new DataBlock<3, float>(points));
@@ -456,23 +456,12 @@ namespace OpenEngine {
                                                    colors));
 
 
-                Vector<3, float> normal = Vector<3, float>(0, 1, 0);
-
                 for (unsigned int i = 0; i < points; ++i){
                     Vector<3, float> v = nodesGS[i];
                     vertices->SetElement(i, v);
-
-                    // from: http://en.wikipedia.org/wiki/UV_mapping
-                    float sum = v[0]*v[0] + v[1]*v[1] + v[2]*v[2];
-                    float denum = sqrt(sum);
-                    float uT = v[0] / denum;
-                    float vT = v[1] / denum;
-                    Vector<2,float> texCoord( uT, vT );
-                    texCoords->SetElement(i, texCoord);
-
-                    Vector<3, float> n = v.GetNormalize() * inverted;
-                    normals->SetElement(i, normal);
-
+                    Vector<3, float> n = v.GetNormalize();
+                    texCoords->SetElement(i, (n + Vector<3,float>(1.0)) * 0.5);
+                    normals->SetElement(i, n * inverted);
                     colors->SetElement(i, color);
                 }
 
