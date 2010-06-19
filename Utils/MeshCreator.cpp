@@ -455,13 +455,14 @@ namespace OpenEngine {
                                                    texCoordList,
                                                    colors));
 
-
+                float inv = inverted ? -1 : 1;
+                
                 for (unsigned int i = 0; i < points; ++i){
                     Vector<3, float> v = nodesGS[i];
                     vertices->SetElement(i, v);
                     Vector<3, float> n = v.GetNormalize();
                     texCoords->SetElement(i, (n + Vector<3,float>(1.0)) * 0.5);
-                    normals->SetElement(i, n * inverted);
+                    normals->SetElement(i, n * inv);
                     colors->SetElement(i, color);
                 }
 
