@@ -79,7 +79,7 @@ namespace OpenEngine {
             logger.info << "Contractions to perform " << maxContractions << logger.end;
 
             // Create and calculate quadrics
-            Matrix<4, 4, double> quadrics[points];
+            vector<Matrix<4, 4, double> > quadrics(points);
             
             // Initialize all quadrics to the 0 matrix.
             for (unsigned int i = 0; i < points; ++i)
