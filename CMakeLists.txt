@@ -8,6 +8,8 @@ ADD_LIBRARY( ${EXTENSION_NAME}
   Utils/MeshTransformer.cpp
   Utils/MeshUtils.h
   Utils/MeshUtils.cpp
+  Utils/MeshSimplifier.h
+  Utils/MeshSimplifier.cpp
 )
 
 TARGET_LINK_LIBRARIES( ${EXTENSION_NAME}
