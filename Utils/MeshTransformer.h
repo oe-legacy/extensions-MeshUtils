@@ -11,12 +11,15 @@
 #define _OE_MESH_TRANSFORMER_H_
 
 #include <Math/Vector.h>
+#include <Math/Quaternion.h>
 #include <boost/shared_ptr.hpp>
 
-using OpenEngine::Math::Vector;
+using namespace OpenEngine::Math;
 
 namespace OpenEngine {
     namespace Geometry {
+        class Mesh;
+        typedef boost::shared_ptr<Mesh> MeshPtr;
         class GeometrySet;
         typedef boost::shared_ptr<GeometrySet> GeometrySetPtr;
     }
@@ -24,11 +27,18 @@ namespace OpenEngine {
 
         namespace MeshTransformer {
 
+            /**
+             * Build transformers that can modify an entire subtree.
+             */
+
+            Geometry::MeshPtr Translate(Geometry::MeshPtr geom, Vector<3, float> move);
             Geometry::GeometrySetPtr Translate(Geometry::GeometrySetPtr geom, Vector<3, float> move);
 
             /**
              * Remember to rotate the normals aswell when rotating.
              */
+            Geometry::MeshPtr Rotate(Geometry::MeshPtr geom, Quaternion<float> rotate);
+            Geometry::GeometrySetPtr Rotate(Geometry::GeometrySetPtr geom, Quaternion<float> rotate);
 
             /**
              * Remember to scale the normals aswell when scaling and
