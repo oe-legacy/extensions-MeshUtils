@@ -33,6 +33,9 @@ namespace OpenEngine {
     }
     namespace Utils {
 
+        // *** USELESS SIMPLIFICATION STUFF *** 
+        // ***  SHOULD PROBABLY BE DELETED  ***
+
         /**
          * Is this the basis for a point class?
          * Could be useful both here and in a triangle/face class.

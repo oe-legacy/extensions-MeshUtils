@@ -26,7 +26,6 @@ using namespace OpenEngine::Resources;
 namespace OpenEngine {
     namespace Utils {
 
-
         struct VertexPair {
             unsigned int v1;
             unsigned int v2;

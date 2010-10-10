@@ -42,7 +42,8 @@ namespace OpenEngine {
 
             /**
              * Remember to scale the normals aswell when scaling and
-             * then normalizing them again.
+             * then normalizing them again. Needs to be done for non
+             * uniform scaling.
              */
         }
     }
