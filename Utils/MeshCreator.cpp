@@ -89,7 +89,7 @@ namespace OpenEngine {
                                     geom, MaterialPtr(new Material())));
             }
         
-            MeshPtr CreateCube(float size, unsigned int detail, Vector<3, float> color){
+            MeshPtr CreateCube(float size, unsigned int detail, Vector<3, float> color, bool inverted){
                 unsigned int d = detail + 1;
                 float halfSize = size / 2;
                 float unit = size / detail;
@@ -115,6 +115,9 @@ namespace OpenEngine {
                         unsigned int index = i + j * d;
                         Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, halfSize, j * unit - halfSize);
                         vertices->SetElement(index, vertex);
+                        if (inverted)
+                            normals->SetElement(index, Vector<3, float>(0, -1, 0));
+                        else
                         normals->SetElement(index, Vector<3, float>(0, 1, 0));
                     }
                 }
@@ -124,7 +127,10 @@ namespace OpenEngine {
                         unsigned int index = bottomOffset + i + j * d;
                         Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, -halfSize, j * unit - halfSize);
                         vertices->SetElement(index, vertex);
-                        normals->SetElement(index, Vector<3, float>(0, -1, 0));
+                        if (inverted)
+                            normals->SetElement(index, Vector<3, float>(0, 1, 0));
+                        else
+                            normals->SetElement(index, Vector<3, float>(0, -1, 0));
                     }
                 }
                 // Front geometry
@@ -133,7 +139,10 @@ namespace OpenEngine {
                         unsigned int index = frontOffset + i + j * d;
                         Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, j * unit - halfSize, halfSize);
                         vertices->SetElement(index, vertex);
-                        normals->SetElement(index, Vector<3, float>(0, 0, 1));
+                        if (inverted)
+                            normals->SetElement(index, Vector<3, float>(0, 0, -1));
+                        else
+                            normals->SetElement(index, Vector<3, float>(0, 0, 1));
                     }
                 }
                 // Back geometry
@@ -142,7 +151,10 @@ namespace OpenEngine {
                         unsigned int index = backOffset + i + j * d;
                         Vector<3, float> vertex = Vector<3, float>(i * unit - halfSize, j * unit - halfSize, -halfSize);
                         vertices->SetElement(index, vertex);
-                        normals->SetElement(index, Vector<3, float>(0, 0, -1));
+                        if (inverted)
+                            normals->SetElement(index, Vector<3, float>(0, 0, 1));
+                        else
+                            normals->SetElement(index, Vector<3, float>(0, 0, -1));
                     }
                 }
                 // Right side geometry
@@ -151,7 +163,10 @@ namespace OpenEngine {
                         unsigned int index = rightOffset + i + j * d;
                         Vector<3, float> vertex = Vector<3, float>(halfSize, i * unit - halfSize, j * unit - halfSize);
                         vertices->SetElement(index, vertex);
-                        normals->SetElement(index, Vector<3, float>(1, 0, 0));
+                        if (inverted)
+                            normals->SetElement(index, Vector<3, float>(-1, 0, 0));
+                        else
+                            normals->SetElement(index, Vector<3, float>(1, 0, 0));
                     }
                 }
                 // Left side geometry
@@ -160,7 +175,10 @@ namespace OpenEngine {
                         unsigned int index = leftOffset + i + j * d;
                         Vector<3, float> vertex = Vector<3, float>(-halfSize, i * unit - halfSize, j * unit - halfSize);
                         vertices->SetElement(index, vertex);
-                        normals->SetElement(index, Vector<3, float>(-1, 0, 0));
+                        if (inverted)
+                            normals->SetElement(index, Vector<3, float>(1, 0, 0));
+                        else
+                            normals->SetElement(index, Vector<3, float>(-1, 0, 0));
                     }
                 }
 
@@ -178,7 +196,7 @@ namespace OpenEngine {
                     for (unsigned int m = 0; m < detail; ++m){
                         for (unsigned int n = 0; n < detail; ++n){
                             // Index the (i, j)'th quad of 2 triangles
-                            if (k == LEFT || k == TOP || k == BACK){
+                            if ((k == LEFT || k == TOP || k == BACK) ^ inverted){
                                 i[index++] = offset + m + n * d;
                                 i[index++] = offset + m + (n+1) * d;
                                 i[index++] = offset + m+1 + n * d;
