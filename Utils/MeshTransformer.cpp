@@ -73,6 +73,33 @@ namespace OpenEngine {
                         norms->SetElement(i, elem);
                     }
 
+                IDataBlockPtr binorms = clone->GetAttributeList("binormal");
+                if (norms != NULL)
+                    for (unsigned int i = 0; i < norms->GetSize(); ++i){
+                        Vector<3, float> elem;
+                        binorms->GetElement(i, elem);
+                        elem = rotate.RotateVector(elem);
+                        binorms->SetElement(i, elem);
+                    }
+
+                IDataBlockPtr tangent = clone->GetAttributeList("tangent");
+                if (norms != NULL)
+                    for (unsigned int i = 0; i < norms->GetSize(); ++i){
+                        Vector<3, float> elem;
+                        tangent->GetElement(i, elem);
+                        elem = rotate.RotateVector(elem);
+                        tangent->SetElement(i, elem);
+                    }
+
+                IDataBlockPtr bitangent = clone->GetAttributeList("bitangent");
+                if (norms != NULL)
+                    for (unsigned int i = 0; i < norms->GetSize(); ++i){
+                        Vector<3, float> elem;
+                        bitangent->GetElement(i, elem);
+                        elem = rotate.RotateVector(elem);
+                        bitangent->SetElement(i, elem);
+                    }
+
                 return clone;
             }
 
