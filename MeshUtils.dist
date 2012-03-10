@@ -1,3 +1,3 @@
 # source
-darcs /extensions/MeshUtils    http://openengine.dk/code/extensions/MeshUtils
-darcs-dev /extensions/MeshUtils    fh.daimi.au.dk:/users/cgd/code/extensions/MeshUtils
+git /extensions/MeshUtils        git://github.com/oe-legacy/extensions-MeshUtils.git
+git-dev /extensions/MeshUtils    git@github.com:oe-legacy/extensions-MeshUtils.git
